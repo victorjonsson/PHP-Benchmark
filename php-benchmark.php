@@ -5,15 +5,14 @@
  *
  * @author Victor Jonsson (http://victorjonsson.se)
  * @license Dual license under GPL and MIT v2
- * @website ....
+ * @website https://github.com/victorjonsson/PHP-Benchmark/
  * @version 0.1
  *
  * @dependencies
  *  - PHP version >= 5.2
- *  - ini setting allow_url_fopen set to true
+ *  - ini setting allow_url_fopen enabled
  *
- * @usage Simply include this file in the top of your index.php
- * and then run one of the following commands:
+ * Documentation and issue tracking on github (https://github.com/victorjonsson/PHP-Benchmark/)
  *
  */
 
@@ -70,7 +69,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         $time_interval = 0;
     $num_request = has_argument('-n');
     if(!$num_request)
-        $num_request = 10;
+        $num_request = 50;
     $url = $argv[1] .( strpos($argv[1], '?') === false ? '?':'&'). 'php-benchmark-test=1';
 
     out('* Bench mark test, '.$num_request.' requests for '.$url);
@@ -176,7 +175,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
 
     out('--------- PHP BENCHMARK TEST ------------');
     out(sprintf('A total of %d requests made (%d failed)', $num_request, $num_failed));
-    out('AVARAGE:');
+    out('AVERAGE:');
     out(sprintf(' - Load time: %fs', $avg_time));
     out(sprintf(' - Memory usage: %f MB', $avg_mem));
     out(sprintf(' - Number of loaded classes: %d', $avg_classes));
@@ -186,6 +185,23 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     out(sprintf(' - Memory usage: %f MB', $top_mem));
     out(sprintf(' - Number of loaded classes: %d', $top_loaded_classes));
     out(sprintf(' - Number of included files: %d', $top_file_includes));
+
+    if($num_failed > 0) {
+        out('FAILED:');
+        $index=0;
+        foreach($failed as $type => $message) {
+            foreach($message as $m) {
+                $index++;
+                if($index == 6 && !$verbose) {
+                    out('... and '.($num_failed - 5).' more failed tests, add -v for more info');
+                    break;
+                }
+                else {
+                    out(sprintf('[%s] - %s', $type, $m));
+                }
+            }
+        }
+    }
 
     die(0);
 }
