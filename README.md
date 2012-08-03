@@ -18,7 +18,7 @@ Simple to use benchmark script for your PHP-application. Gives you information a
 
 ## Usage
 
-### PHP Comman Line Tool
+### PHP Command Line Tool
 
 Open your shell interpreter and navigate to the directory where the index.php file of your appliaction is located. Use the following commands to run the
 benchmark tests.
@@ -32,7 +32,7 @@ number of loaded classes and included files.
 
 `$ php index.php http://mywebsite.com/ -v` If a lot of the request fails it might be good to add *-v* to get more information about what fails.
 
-### Node Comman Line Toole
+### Node Command Line Toole
 
 `$ node php-benchmark http://mywebsite.com/` Will do a benchmark test with 50 requests that gives you average page generation time, memory consumption,
 number of loaded classes and included files.
