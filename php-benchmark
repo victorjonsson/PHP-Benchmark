@@ -1,0 +1,60 @@
+
+function hasArgument(names) {
+    var found = false;
+    names.split(',').forEach(function(val) {
+        for(var i=0; i < process.argc; i++) {
+            if(process.argv[i] == val) {
+                found = process.argc < i ? process.argv[i+1] : true;
+                return false;
+            }
+        }
+    });
+    return false;
+}
+
+// No website given
+if( process.argc == 0 ) {
+    console.log('You have to supply an URL (eg. node php-benchmark http://mydomain.com/)');
+}
+
+// Valid URL
+else if(proccess.argv[0].substr(0, 7) != 'http://') { // todo: add better check for correct url
+    console.log('%s does not seem to be a correct URL', proccess.argv[0]);
+}
+
+// Start bench mark
+else {
+
+    var verbose = hasArgument('-v,-verbose,verbose') !== false,
+        requestsPerSecond = hasArgument('-s'),
+        numRequests = hasArgument('-n'),
+        useUniqueURL = hasArgument('-nu') === false,
+        requestIndex = 0,
+        failed = {},
+        requests = [];
+
+    if(requestsPerSecond === false)
+        requestsPerSecond = 10;
+    if(numRequests === false)
+        numRequests = 50;
+
+
+    var whenAllRequestsFinished = function() {
+        console.log('');
+    };
+
+    // Run requests
+    var interval = setInterval(function() {
+
+        for(var i=requestsPerSecond; i > 0 && requestIndex < numRequests; i--) {
+
+            requestIndex++;
+        }
+
+        // All requests is sent
+        if(numRequests == requestIndex)
+            clearInterval(interval);
+
+    }, 1000);
+
+}
