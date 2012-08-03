@@ -72,7 +72,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         $num_request = 50;
     $url = $argv[1] .( strpos($argv[1], '?') === false ? '?':'&'). 'php-benchmark-test=1';
 
-    out('* Bench mark test, '.$num_request.' requests for '.$url);
+    out('* Bench mark test, '.$num_request.' requests, '.$url);
 
     # Make the requests
     for($i=0; $i < $num_request; $i++) {
