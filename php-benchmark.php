@@ -20,15 +20,15 @@
 //
 // Command line (not relying on PHP_SAPI http://www.php.net/manual/en/function.php-sapi-name.php#89858)
 //
-if( empty($_SERVER['REMOTE_ADDR']) ) {
+if(empty($_SERVER['REMOTE_ADDR'])) {
 
-    function out($m, $error=false) {
+    function out($m, $error = false) {
         global $to_log_file;
         if($to_log_file) {
             file_put_contents($to_log_file, "$m\n", FILE_APPEND);
         }
         else {
-            if( $error )
+            if($error)
                 fwrite(STDERR, "$m\n");
             else
                 fwrite(STDOUT, "$m\n");
@@ -37,13 +37,13 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
 
     function has_argument($names) {
         $names = rtrim($names, ',');
-        foreach( explode(',', $names) as $arg_name ) {
+        foreach(explode(',', $names) as $arg_name) {
             if($arg_name != '') {
-                for($i=0; $i < $GLOBALS['argc']; $i++) {
+                for($i = 0; $i < $GLOBALS['argc']; $i++) {
                     $arg = $GLOBALS['argv'][$i];
-                    if( $arg == $arg_name ) {
-                        if( ($GLOBALS['argc']-1) > $i )
-                            return $GLOBALS['argv'][$i+1];
+                    if($arg == $arg_name) {
+                        if(($GLOBALS['argc'] - 1) > $i)
+                            return $GLOBALS['argv'][$i + 1];
                         else
                             return true;
                     }
@@ -54,13 +54,13 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     }
 
     # No website given
-    if( $argc == 1 ) {
+    if($argc == 1) {
         out('No website url given', true);
         die;
     }
 
     # not a valid website
-    if( filter_var($argv[1], FILTER_VALIDATE_URL) === false ) {
+    if(filter_var($argv[1], FILTER_VALIDATE_URL) === false) {
         out($argv[1].' is not a valid url', true);
         die;
     }
@@ -72,13 +72,13 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     $verbose = has_argument('-v,-verbose,verbose') !== false;
     $time_interval = has_argument('-ti');
     $to_log_file = has_argument('-f');
-    if( !$time_interval )
-        $time_interval = 0;
     $num_request = has_argument('-n');
+    $url = $argv[1].(strpos($argv[1], '?') === false ? '?' : '&').'php-benchmark-test=1';
+
+    if(!$time_interval)
+        $time_interval = 0;
     if(!$num_request)
         $num_request = 50;
-    $url = $argv[1] .( strpos($argv[1], '?') === false ? '?':'&'). 'php-benchmark-test=1';
-
     if($to_log_file === true)
         $to_log_file = dirname(__FILE__);
     if(is_dir($to_log_file))
@@ -89,13 +89,13 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     out('* Bench mark test, '.$num_request.' requests, '.$url);
 
     # Make the requests
-    for($i=0; $i < $num_request; $i++) {
-        $request_url = $url . ($unique_requests ? '&_='.uniqid(mt_rand()):'');
+    for($i = 0; $i < $num_request; $i++) {
+        $request_url = $url.($unique_requests ? '&_='.uniqid(mt_rand()) : '');
         $html = @file_get_contents($request_url);
         $request_success = false;
         $status_message = false;
-        if( !empty($http_response_header) ) {
-            foreach( $http_response_header as $header ) {
+        if(!empty($http_response_header)) {
+            foreach($http_response_header as $header) {
                 if(substr($header, 0, 6) == 'HTTP/1') {
                     $status_message = trim(substr($header, strpos($header, ' '), strlen($header)));
                     $request_success = strnatcasecmp($status_message, '200 OK') === 0;
@@ -105,8 +105,8 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         }
 
         # Failed for some reason
-        if( !$request_success ) {
-            if( $status_message ) {
+        if(!$request_success) {
+            if($status_message) {
                 $message = sprintf('Request #%d failed with status %s', $i, $status_message);
             }
             else {
@@ -116,15 +116,16 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
             out($message);
 
             $fail_key = $status_message ? $status_message : 'unknown';
-            if( empty($failed[$fail_key]) )
+            if(empty($failed[$fail_key]))
                 $failed[$fail_key] = array();
             $failed[$fail_key][] = $message;
+
         }
         else {
             $data_parts = explode('[phpbenchmark', $html);
             if(count($data_parts) == 1) {
                 $message = sprintf('Request #%d failed for unknown reason, response body missing php benchmark data', $i);
-                if( empty($failed['unknown']) )
+                if(empty($failed['unknown']))
                     $failed['unknown'] = array();
                 $failed['unkown'][] = $message;
                 out($message);
@@ -132,7 +133,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
             }
             else {
                 $data = array();
-                $info_parts = explode(' ', $data_parts[ count($data_parts) - 1]);
+                $info_parts = explode(' ', $data_parts[count($data_parts) - 1]);
                 foreach($info_parts as $info) {
                     $info = explode('=', $info);
                     if(count($info) == 2) {
@@ -143,7 +144,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
                         else
                             $val = (int)$val;
 
-                        $data[ $name ] = $val;
+                        $data[$name] = $val;
                     }
                 }
 
@@ -151,7 +152,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
             }
         }
 
-        out('Request #'.$i.' finished'.($request_success ? '':' (failed)'));
+        out('Request #'.$i.' finished'.($request_success ? '' : ' (failed)'));
         usleep($time_interval);
     }
 
@@ -177,8 +178,8 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         $total_classes += $d['classes'];
         if($top_file_includes < $d['files'])
             $top_file_includes = $d['files'];
-        if($top_loaded_classes < $d['classes']);
-            $top_loaded_classes = $d['classes'];
+        if($top_loaded_classes < $d['classes']) ;
+        $top_loaded_classes = $d['classes'];
         if(bccomp((string)$top_mem, (string)$d['memory'], 5) == -1)
             $top_mem = $d['memory'];
         if(bccomp((string)$top_time, (string)$d['time'], 5) == -1)
@@ -207,7 +208,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
 
     if($num_failed > 0) {
         out('FAILED:');
-        $index=0;
+        $index = 0;
         foreach($failed as $type => $message) {
             foreach($message as $m) {
                 $index++;
@@ -223,26 +224,25 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     }
 
     die(0);
-}
-
-//
+} //
 // Doing test
 //
-elseif( isset($_GET['php-benchmark-test']) ) {
+elseif(isset($_GET['php-benchmark-test'])) {
     $GLOBALS['php_benchmark_start_time'] = microtime(true);
     function php_benchmark_shutdown() {
-        $time = round(microtime(true) - $GLOBALS['php_benchmark_start_time'], 4);
-        $memory = round(memory_get_usage()/1024/1024, 4);
+        $time = bcsub(microtime(true), $GLOBALS['php_benchmark_start_time'], 4);
+        $memory = round(memory_get_usage() / 1024 / 1024, 4);
         $files = count(get_included_files());
         $classes = count(get_declared_classes());
         if(isset($_GET['display-test-data'])) {
             printf('<div style="position:absolute; top: 20px; left:20px; background: #FFF; padding: 5px; color:#000; z-index: 9999">'.
-                    '<strong>Time generating page:</strong> %fs <strong>Memory:</strong> %f MB <strong>Included files:</strong> %d'.
-                    ' <strong>Loaded classes:</strong> %d</div>', $time, $memory, $files, $classes);
+                '<strong>Time generating page:</strong> %fs <strong>Memory:</strong> %f MB <strong>Included files:</strong> %d'.
+                ' <strong>Loaded classes:</strong> %d</div>', $time, $memory, $files, $classes);
         }
         else {
             printf('[phpbenchmark time=%f memory=%f files=%d classes=%d]', $time, $memory, $files, $classes);
         }
     }
+
     register_shutdown_function('php_benchmark_shutdown');
 }
