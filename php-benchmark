@@ -188,7 +188,7 @@ else {
                                         value = parseInt(value);
                                     info[ name ] = value;
                                 }
-                                
+
                                 return true;
                             });
 

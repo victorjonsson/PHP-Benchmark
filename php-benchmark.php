@@ -94,11 +94,11 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         $html = @file_get_contents($request_url);
         $status_ok = false;
         $status_message = false;
-        if( $html ) {
+        if( !empty($http_response_header) ) {
             foreach( $http_response_header as $header ) {
                 if(substr($header, 0, 6) == 'HTTP/1') {
-                    $status_message = trim(substr($header, strpos(' ', $header), strlen($header)));
-                    $status_ok = strnatcasecmp($status_message, '200 OK');
+                    $status_message = trim(substr($header, strpos($header, ' '), strlen($header)));
+                    $status_ok = strnatcasecmp($status_message, '200 OK') === 0;
                     break;
                 }
             }
@@ -154,7 +154,10 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
         usleep($time_interval);
     }
 
-    $num_failed = count($failed);
+    $num_failed = 0;
+    foreach($failed as $type => $messages) {
+        $num_failed += count($messages);
+    }
 
     $avg_loaded_classes = 0;
     $avg_file_includes = 0;
@@ -183,10 +186,10 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     }
 
     $num_successful_req = count($requests);
-    $avg_mem = round(bcdiv($total_mem, $num_successful_req, 4), 4);
-    $avg_time = round(bcdiv($total_time, $num_successful_req, 4), 4);
-    $avg_file = $total_files / $num_successful_req;
-    $avg_classes = $total_classes / $num_successful_req;
+    $avg_mem = $total_mem > 0 ? round(bcdiv($total_mem, $num_successful_req, 4), 4) : 0;
+    $avg_time = $top_time > 0 ? round(bcdiv($total_time, $num_successful_req, 4), 4) : 0;
+    $avg_file = $total_files > 0 ? $total_files / $num_successful_req : 0;
+    $avg_classes = $total_classes > 0 ? $total_classes / $num_successful_req : 0;
 
     out('--------- PHP BENCHMARK TEST ------------');
     out(sprintf('A total of %d requests made (%d failed)', $num_request, $num_failed));

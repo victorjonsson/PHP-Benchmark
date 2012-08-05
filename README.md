@@ -1,8 +1,8 @@
 PHP-Benchmark
 =============
 
-Simple to use benchmark script for your PHP-application. Gives you information about average page generation
-time and memory consumption. The test will do a number of requests to your application with a query parameter
+Easy to use benchmark script for your PHP-application. Gives you information about average time spent on page generation
+and memory consumption. The test will do a number of requests to your application with a query parameter
 that tells the benchmark script to monitor the time and memory consumption during the request. When all requests
 is finished you will get the following information:
 
