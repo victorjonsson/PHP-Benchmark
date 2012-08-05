@@ -92,20 +92,20 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     for($i=0; $i < $num_request; $i++) {
         $request_url = $url . ($unique_requests ? '&_='.uniqid(mt_rand()):'');
         $html = @file_get_contents($request_url);
-        $status_ok = false;
+        $request_success = false;
         $status_message = false;
         if( !empty($http_response_header) ) {
             foreach( $http_response_header as $header ) {
                 if(substr($header, 0, 6) == 'HTTP/1') {
                     $status_message = trim(substr($header, strpos($header, ' '), strlen($header)));
-                    $status_ok = strnatcasecmp($status_message, '200 OK') === 0;
+                    $request_success = strnatcasecmp($status_message, '200 OK') === 0;
                     break;
                 }
             }
         }
 
         # Failed for some reason
-        if( !$status_ok ) {
+        if( !$request_success ) {
             if( $status_message ) {
                 $message = sprintf('Request #%d failed with status %s', $i, $status_message);
             }
@@ -128,6 +128,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
                     $failed['unknown'] = array();
                 $failed['unkown'][] = $message;
                 out($message);
+                $request_success = false;
             }
             else {
                 $data = array();
@@ -150,7 +151,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
             }
         }
 
-        out('Request #'.$i.' finished'.($status_ok ? '':' (failed)'));
+        out('Request #'.$i.' finished'.($request_success ? '':' (failed)'));
         usleep($time_interval);
     }
 
@@ -212,7 +213,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
                 $index++;
                 if($index == 6 && !$verbose) {
                     out('... and '.($num_failed - 5).' more failed tests, add -v for more info');
-                    break;
+                    die(0);
                 }
                 else {
                     out(sprintf('[%s] - %s', $type, $m));
