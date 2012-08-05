@@ -6,12 +6,12 @@ time and memory consumption. The test will do a number of requests to your appli
 that tells the benchmark script to monitor the time and memory consumption during the request. When all requests
 is finished you will get the following information:
 
- - Average page generation time
+ - Average time spent on generating the page
  - Average memory used
  - Average number of included files
  - Average number of declared classes
- - The highest page generation time monitored during the requests
- - The highest memory consumption monitored during the requests
+ - The highest memory consumption monitored during the test
+ - The highest time spent on generating the page during the test
  - The number of failed requests (timeout or http status other then 200)
 
 You execute the tests via command line, either using PHP CLI or Nodejs CLI.
@@ -47,7 +47,7 @@ number of loaded classes and included files.
 
 `$ php index.php http://mywebsite.com/ -f /var/log/` Will write ouput to log file in /var/log/.
 
-`$ php index.php http://mywebsite.com/ -f test.log` Will write ouput to log file in test.log in current directory.
+`$ php index.php http://mywebsite.com/ -f test.log` Will write ouput to log file test.log in current directory.
 
 
 ### Node Command Line Tool

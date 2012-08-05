@@ -23,13 +23,14 @@ else {
 
     function hasArgument(names) {
         var found = false;
-        names.split(',').forEach(function(val) {
+        names.split(',').every(function(val) {
             for(var i=0; i < process.argv.length; i++) {
                 if(process.argv[i] == val) {
                     found = process.argv.length-1 > i ? process.argv[i+1] : true;
                     return false;
                 }
             }
+            return true;
         });
         return found;
     }
@@ -74,7 +75,7 @@ else {
                 var totalFiles = 0;
                 var totalClasses = 0;
 
-                requests.forEach(function(info) {
+                requests.every(function(info, b) {
                     totalTime += info.time;
                     totalMemory += info.memory;
                     totalClasses += info.classes;
@@ -87,6 +88,8 @@ else {
                         topLoadedClasses = info.classes;
                     if(topFileIncludes < info.files)
                         topFileIncludes = info.files;
+
+                    return true;
                 });
 
                 var avgMemory = totalMemory / requests.length;
@@ -107,6 +110,20 @@ else {
                 log(' - Memory usage: '+topMemory+' MB');
                 log(util.format(' - Number of loaded classes: %d', topLoadedClasses));
                 log(util.format(' - Number of included files: %d', topFileIncludes));
+
+                if(failed.length > 0) {
+                    log('FAILED:');
+                    failed.every(function(val, i) {
+                        if(i == 5 && !verbose) {
+                            log('... and '+(failed.length - 5)+' more failed, add -v for more info');
+                            return false;
+                        }
+                        else {
+                            log(' - '+val);
+                            return true;
+                        }
+                    });
+                }
             }
         };
 
@@ -152,48 +169,58 @@ else {
                     body = body.concat(chunk);
                 });
                 response.on('end', function() {
-                    var parts = body.split('[phpbenchmark');
-                    if(parts.length == 2) {
-                        var info = {};
-                        parts[1].split(' ').forEach(function(val) {
-                            var infoParts = val.split('=');
-                            if(infoParts.length == 2) {
-                                var name = infoParts[0].trim();
-                                var value = infoParts[1].trim();
-                                if(name == 'time' || name == 'memory')
-                                    value = parseFloat(value);
-                                else
-                                    value = parseInt(value);
-                                info[ name ] = value;
-                            }
-                        });
-
-                        requests.push(info);
+                    var fail = false;
+                    if(response.statusCode != 200) {
+                        fail = 'Server responding with status '+response.statusCode;
                     }
                     else {
-                        failed.push('Request missing php benchmark data');
+                        var parts = body.split('[phpbenchmark');
+                        if(parts.length == 2) {
+                            var info = {};
+                            parts[1].split(' ').every(function(val) {
+                                var infoParts = val.split('=');
+                                if(infoParts.length == 2) {
+                                    var name = infoParts[0].trim();
+                                    var value = infoParts[1].trim();
+                                    if(name == 'time' || name == 'memory')
+                                        value = parseFloat(value);
+                                    else
+                                        value = parseInt(value);
+                                    info[ name ] = value;
+                                }
+                                
+                                return true;
+                            });
+
+                            requests.push(info);
+                        }
+                        else {
+                            fail = 'Request missing php benchmark data';
+                        }
                     }
 
-                    whenAllRequestsFinished();
+                    if(fail !== false)
+                        failed.push(fail);
+
+                    whenAllRequestsFinished(fail !== false);
                 });
             });
 
             request.on('error', function(e) {
                 failed.push(e.toString());
-                whenAllRequestsFinished();
+                whenAllRequestsFinished(true);
             });
 
             if(request.connection != undefined) {
                 request.connection.setTimelog(8000, function() {
                     failed.push('Request time out');
                     this.abort();
-                    whenAllRequestsFinished();
+                    whenAllRequestsFinished(true);
                 });
             }
 
             request.write('');
             request.end();
-
             requestIndex++;
         }
 
