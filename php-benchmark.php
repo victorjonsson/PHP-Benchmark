@@ -42,7 +42,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
                 for($i=0; $i < $GLOBALS['argc']; $i++) {
                     $arg = $GLOBALS['argv'][$i];
                     if( $arg == $arg_name ) {
-                        if( $GLOBALS['argc'] > $i )
+                        if( ($GLOBALS['argc']-1) > $i )
                             return $GLOBALS['argv'][$i+1];
                         else
                             return true;
@@ -82,7 +82,7 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     if($to_log_file === true)
         $to_log_file = dirname(__FILE__);
     if(is_dir($to_log_file))
-        $to_log_file .= '/php-benchmark-test-'.date('y-m-d-hm').'.log';
+        $to_log_file .= '/benchmark-'.date('y-m-d-hm').'.log';
     if($to_log_file)
         touch($to_log_file);
 

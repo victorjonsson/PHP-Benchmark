@@ -26,7 +26,7 @@ else {
         names.split(',').forEach(function(val) {
             for(var i=0; i < process.argv.length; i++) {
                 if(process.argv[i] == val) {
-                    found = process.argv.length > i ? process.argv[i+1] : true;
+                    found = process.argv.length-1 > i ? process.argv[i+1] : true;
                     return false;
                 }
             }
@@ -60,9 +60,9 @@ else {
                 console.log(mess);
             }
         },
-        whenAllRequestsFinished = function() {
+        whenAllRequestsFinished = function(wasFailed) {
             var num = failed.length + requests.length;
-            log('Request #'+num+' finished');
+            log('Request #'+num+' finished'+ ( wasFailed ? ' (failed)':''));
             if(num == numRequests) {
 
                 var topMemory = 0.0;
@@ -115,10 +115,14 @@ else {
     if(numRequests === false)
         numRequests = 50;
     if(logFile === true)
-        logFile = __dirname;
-    if(logFile !== false && fs.fstatSync(logFile).isDirectory()) {
+        logFile = process.cwd();
+
+    if(logFile !== false && !fs.existsSync(logFile)) {
+        logFile = process.cwd() +'/'+ logFile;
+    }
+    else if(logFile !== false && fs.lstatSync(logFile+'/').isDirectory()) {
         var d = new Date();
-        logFile = util.format('%s/php-benchmark-%d-%d-%d-%d%d.log', logFile, d.getFullYear(), d.getMonth(), d.getDay(), d.getHours(), d.getMinutes());
+        logFile = util.format('%s/benchmark-%d-%d-%d-%d%d.log', logFile, d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes());
     }
 
     var mess = util.format('* About to send %d requests to %s', numRequests, requestURL);
