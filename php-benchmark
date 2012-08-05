@@ -1,52 +1,194 @@
-
-function hasArgument(names) {
-    var found = false;
-    names.split(',').forEach(function(val) {
-        for(var i=0; i < process.argc; i++) {
-            if(process.argv[i] == val) {
-                found = process.argc < i ? process.argv[i+1] : true;
-                return false;
-            }
-        }
-    });
-    return false;
-}
+/**
+ * PHP Bench Mark - Node CLI
+ * -------------------------------
+ *
+ * @author Victor Jonsson (http://victorjonsson.se)
+ * @license Dual licensed under the MIT or GPL Version 2 licenses
+ * @website https://github.com/victorjonsson/PHP-Benchmark/
+ * @version 0.1
+ */
 
 // No website given
-if( process.argc == 0 ) {
+if( process.argv.length < 3 ) {
     console.log('You have to supply an URL (eg. node php-benchmark http://mydomain.com/)');
 }
 
 // Valid URL
-else if(proccess.argv[0].substr(0, 7) != 'http://') { // todo: add better check for correct url
-    console.log('%s does not seem to be a correct URL', proccess.argv[0]);
+else if(process.argv[2].substr(0, 7) != 'http://') { // todo: add better check for correct url
+    console.log('%s does not seem to be a correct URL', process.argv[2]);
 }
 
 // Start bench mark
 else {
 
+    function hasArgument(names) {
+        var found = false;
+        names.split(',').forEach(function(val) {
+            for(var i=0; i < process.argv.length; i++) {
+                if(process.argv[i] == val) {
+                    found = process.argv.length > i ? process.argv[i+1] : true;
+                    return false;
+                }
+            }
+        });
+        return found;
+    }
+
     var verbose = hasArgument('-v,-verbose,verbose') !== false,
         requestsPerSecond = hasArgument('-s'),
         numRequests = hasArgument('-n'),
+        logFile = hasArgument('-f'),
         useUniqueURL = hasArgument('-nu') === false,
         requestIndex = 0,
-        failed = {},
-        requests = [];
+        failed = [],
+        requests = [],
+        interval = null,
+        http = require('http'),
+        fs = require('fs'),
+        url = require('url'),
+        util = require('util'),
+        requestURL = process.argv[2] + (process.argv[2].indexOf('?') === -1 ? '?':'&') + 'php-benchmark-test=1',
+        logFileStream = null,
+        log = function(mess) {
+            if (logFile) {
+                if(logFileStream === null)
+                    logFileStream = fs.createWriteStream(logFile, {flags: 'a+'});
+
+                logFileStream.write(mess+"\n");
+            }
+            else {
+                console.log(mess);
+            }
+        },
+        whenAllRequestsFinished = function() {
+            var num = failed.length + requests.length;
+            log('Request #'+num+' finished');
+            if(num == numRequests) {
+
+                var topMemory = 0.0;
+                var topTime = 0.0;
+                var topLoadedClasses = 0;
+                var topFileIncludes = 0;
+                var totalTime = 0;
+                var totalMemory = 0;
+                var totalFiles = 0;
+                var totalClasses = 0;
+
+                requests.forEach(function(info) {
+                    totalTime += info.time;
+                    totalMemory += info.memory;
+                    totalClasses += info.classes;
+                    totalFiles += info.files;
+                    if(topMemory < info.memory)
+                        topMemory = info.memory;
+                    if(topTime < info.time)
+                        topTime = info.time;
+                    if(topLoadedClasses < info.classes)
+                        topLoadedClasses = info.classes;
+                    if(topFileIncludes < info.files)
+                        topFileIncludes = info.files;
+                });
+
+                var avgMemory = totalMemory / requests.length;
+                var avgTime = totalTime / requests.length;
+                var avgFiles = totalFiles / requests.length;
+                var avgClassesLoaded = totalClasses / requests.length;
+
+
+                log('--------- PHP BENCHMARK TEST ------------');
+                log(util.format('A total of %d requests made (%d failed)', numRequests, failed.length));
+                log('AVERAGE:');
+                log(' - Time generating page: '+avgTime+'s');
+                log(' - Memory usage: '+avgMemory+' MB');
+                log(util.format(' - Number of loaded classes: %d', avgClassesLoaded));
+                log(util.format(' - Number of included files: %d', avgFiles));
+                log('SPIKES:');
+                log(' - Time generating page: '+topTime+'s');
+                log(' - Memory usage: '+topMemory+' MB');
+                log(util.format(' - Number of loaded classes: %d', topLoadedClasses));
+                log(util.format(' - Number of included files: %d', topFileIncludes));
+            }
+        };
 
     if(requestsPerSecond === false)
-        requestsPerSecond = 10;
+        requestsPerSecond = 20;
     if(numRequests === false)
         numRequests = 50;
+    if(logFile === true)
+        logFile = __dirname;
+    if(logFile !== false && fs.fstatSync(logFile).isDirectory()) {
+        var d = new Date();
+        logFile = util.format('%s/php-benchmark-%d-%d-%d-%d%d.log', logFile, d.getFullYear(), d.getMonth(), d.getDay(), d.getHours(), d.getMinutes());
+    }
 
+    var mess = util.format('* About to send %d requests to %s', numRequests, requestURL);
+    log(mess);
+    if(logFile !== false) {
+        console.log(mess);
+        console.log('* Log written to '+logFile);
+    }
 
-    var whenAllRequestsFinished = function() {
-        console.log('');
-    };
 
     // Run requests
-    var interval = setInterval(function() {
+    interval = setInterval(function() {
+        for(var i=requestsPerSecond ; i > 0 && requestIndex < numRequests; i--) {
 
-        for(var i=requestsPerSecond; i > 0 && requestIndex < numRequests; i--) {
+            var urlProps = url.parse(requestURL + (useUniqueURL ? '&_'+(new Date().getTime()):'') );
+
+            var options = {
+                protocol : urlProps.protocol,
+                host : urlProps.host,
+                path : urlProps.path,
+                method : 'GET'
+            };
+
+            var request = http.request(options, function(response) {
+                var body = '';
+                response.on('data', function (chunk) {
+                    body = body.concat(chunk);
+                });
+                response.on('end', function() {
+                    var parts = body.split('[phpbenchmark');
+                    if(parts.length == 2) {
+                        var info = {};
+                        parts[1].split(' ').forEach(function(val) {
+                            var infoParts = val.split('=');
+                            if(infoParts.length == 2) {
+                                var name = infoParts[0].trim();
+                                var value = infoParts[1].trim();
+                                if(name == 'time' || name == 'memory')
+                                    value = parseFloat(value);
+                                else
+                                    value = parseInt(value);
+                                info[ name ] = value;
+                            }
+                        });
+
+                        requests.push(info);
+                    }
+                    else {
+                        failed.push('Request missing php benchmark data');
+                    }
+
+                    whenAllRequestsFinished();
+                });
+            });
+
+            request.on('error', function(e) {
+                failed.push(e.toString());
+                whenAllRequestsFinished();
+            });
+
+            if(request.connection != undefined) {
+                request.connection.setTimelog(8000, function() {
+                    failed.push('Request time out');
+                    this.abort();
+                    whenAllRequestsFinished();
+                });
+            }
+
+            request.write('');
+            request.end();
 
             requestIndex++;
         }

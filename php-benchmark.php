@@ -4,7 +4,7 @@
  * -------------------------------
  *
  * @author Victor Jonsson (http://victorjonsson.se)
- * @license Dual license under GPL and MIT v2
+ * @license Dual licensed under the MIT or GPL Version 2 licenses
  * @website https://github.com/victorjonsson/PHP-Benchmark/
  * @version 0.1
  *
@@ -23,10 +23,16 @@
 if( empty($_SERVER['REMOTE_ADDR']) ) {
 
     function out($m, $error=false) {
-        if( $error )
-            fwrite(STDERR, "$m\n");
-        else
-            fwrite(STDOUT, "$m\n");
+        global $to_log_file;
+        if($to_log_file) {
+            file_put_contents($to_log_file, "$m\n", FILE_APPEND);
+        }
+        else {
+            if( $error )
+                fwrite(STDERR, "$m\n");
+            else
+                fwrite(STDOUT, "$m\n");
+        }
     }
 
     function has_argument($names) {
@@ -65,12 +71,20 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
     $unique_requests = has_argument('-nu') === false;
     $verbose = has_argument('-v,-verbose,verbose') !== false;
     $time_interval = has_argument('-ti');
+    $to_log_file = has_argument('-f');
     if( !$time_interval )
         $time_interval = 0;
     $num_request = has_argument('-n');
     if(!$num_request)
         $num_request = 50;
     $url = $argv[1] .( strpos($argv[1], '?') === false ? '?':'&'). 'php-benchmark-test=1';
+
+    if($to_log_file === true)
+        $to_log_file = dirname(__FILE__);
+    if(is_dir($to_log_file))
+        $to_log_file .= '/php-benchmark-test-'.date('y-m-d-hm').'.log';
+    if($to_log_file)
+        touch($to_log_file);
 
     out('* Bench mark test, '.$num_request.' requests, '.$url);
 
@@ -168,20 +182,21 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
 
     }
 
-    $avg_mem = round(bcdiv($total_mem, $num_request, 4), 4);
-    $avg_time = round(bcdiv($total_time, $num_request, 4), 4);
-    $avg_file = $total_files / $num_request;
-    $avg_classes = $total_classes / $num_request;
+    $num_successful_req = count($requests);
+    $avg_mem = round(bcdiv($total_mem, $num_successful_req, 4), 4);
+    $avg_time = round(bcdiv($total_time, $num_successful_req, 4), 4);
+    $avg_file = $total_files / $num_successful_req;
+    $avg_classes = $total_classes / $num_successful_req;
 
     out('--------- PHP BENCHMARK TEST ------------');
     out(sprintf('A total of %d requests made (%d failed)', $num_request, $num_failed));
     out('AVERAGE:');
-    out(sprintf(' - Load time: %fs', $avg_time));
+    out(sprintf(' - Time generating page: %fs', $avg_time));
     out(sprintf(' - Memory usage: %f MB', $avg_mem));
     out(sprintf(' - Number of loaded classes: %d', $avg_classes));
     out(sprintf(' - Number of included files: %d', $avg_file));
     out('SPIKES:');
-    out(sprintf(' - Load time: %fs', $top_time));
+    out(sprintf(' - Time generating page: %fs', $top_time));
     out(sprintf(' - Memory usage: %f MB', $top_mem));
     out(sprintf(' - Number of loaded classes: %d', $top_loaded_classes));
     out(sprintf(' - Number of included files: %d', $top_file_includes));
@@ -212,11 +227,18 @@ if( empty($_SERVER['REMOTE_ADDR']) ) {
 elseif( isset($_GET['php-benchmark-test']) ) {
     $GLOBALS['php_benchmark_start_time'] = microtime(true);
     function php_benchmark_shutdown() {
-        $total_time = microtime(true) - $GLOBALS['php_benchmark_start_time'];
+        $time = round(microtime(true) - $GLOBALS['php_benchmark_start_time'], 4);
         $memory = round(memory_get_usage()/1024/1024, 4);
-        $num_included_files = count(get_included_files());
+        $files = count(get_included_files());
         $classes = count(get_declared_classes());
-        echo '[phpbenchmark time='.round($total_time, 4).' memory='.$memory.' files='.$num_included_files.' classes='.$classes.']';
+        if(isset($_GET['display-test-data'])) {
+            printf('<div style="position:absolute; top: 20px; left:20px; background: #FFF; padding: 5px; color:#000; z-index: 9999">'.
+                    '<strong>Time generating page:</strong> %fs <strong>Memory:</strong> %f MB <strong>Included files:</strong> %d'.
+                    ' <strong>Loaded classes:</strong> %d</div>', $time, $memory, $files, $classes);
+        }
+        else {
+            printf('[phpbenchmark time=%f memory=%f files=%d classes=%d]', $time, $memory, $files, $classes);
+        }
     }
     register_shutdown_function('php_benchmark_shutdown');
 }
