@@ -197,12 +197,12 @@ if(empty($_SERVER['REMOTE_ADDR'])) {
     out(sprintf('A total of %d requests made (%d failed)', $num_request, $num_failed));
     out('AVERAGE:');
     out(sprintf(' - Time generating page: %fs', $avg_time));
-    out(sprintf(' - Memory usage: %f MB', $avg_mem));
+    out(sprintf(' - Memory peak: %f MB', $avg_mem));
     out(sprintf(' - Number of loaded classes: %d', $avg_classes));
     out(sprintf(' - Number of included files: %d', $avg_file));
-    out('SPIKES:');
+    out('PEAKS:');
     out(sprintf(' - Time generating page: %fs', $top_time));
-    out(sprintf(' - Memory usage: %f MB', $top_mem));
+    out(sprintf(' - Memory peak: %f MB', $top_mem));
     out(sprintf(' - Number of loaded classes: %d', $top_loaded_classes));
     out(sprintf(' - Number of included files: %d', $top_file_includes));
 
@@ -224,25 +224,27 @@ if(empty($_SERVER['REMOTE_ADDR'])) {
     }
 
     die(0);
-} //
+}
+//
 // Doing test
 //
 elseif(isset($_GET['php-benchmark-test'])) {
+
+    // Monitor total time and
     $GLOBALS['php_benchmark_start_time'] = microtime(true);
     function php_benchmark_shutdown() {
         $time = bcsub(microtime(true), $GLOBALS['php_benchmark_start_time'], 4);
-        $memory = round(memory_get_usage() / 1024 / 1024, 4);
+        $memory = round(memory_get_peak_usage() / 1024 / 1024, 4);
         $files = count(get_included_files());
         $classes = count(get_declared_classes());
         if(isset($_GET['display-test-data'])) {
             printf('<div style="position:absolute; top: 20px; left:20px; background: #FFF; padding: 5px; color:#000; z-index: 9999">'.
-                '<strong>Time generating page:</strong> %fs <strong>Memory:</strong> %f MB <strong>Included files:</strong> %d'.
+                '<strong>Time generating page:</strong> %fs <strong>Memory peak:</strong> %f MB <strong>Included files:</strong> %d'.
                 ' <strong>Loaded classes:</strong> %d</div>', $time, $memory, $files, $classes);
         }
         else {
             printf('[phpbenchmark time=%f memory=%f files=%d classes=%d]', $time, $memory, $files, $classes);
         }
     }
-
     register_shutdown_function('php_benchmark_shutdown');
 }

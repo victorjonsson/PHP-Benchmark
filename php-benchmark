@@ -102,12 +102,12 @@ else {
                 log(util.format('A total of %d requests made (%d failed)', numRequests, failed.length));
                 log('AVERAGE:');
                 log(' - Time generating page: '+avgTime+'s');
-                log(' - Memory usage: '+avgMemory+' MB');
+                log(' - Memory peak: '+avgMemory+' MB');
                 log(util.format(' - Number of loaded classes: %d', avgClassesLoaded));
                 log(util.format(' - Number of included files: %d', avgFiles));
-                log('SPIKES:');
+                log('PEAKS:');
                 log(' - Time generating page: '+topTime+'s');
-                log(' - Memory usage: '+topMemory+' MB');
+                log(' - Memory peak: '+topMemory+' MB');
                 log(util.format(' - Number of loaded classes: %d', topLoadedClasses));
                 log(util.format(' - Number of included files: %d', topFileIncludes));
 
@@ -128,7 +128,7 @@ else {
         };
 
     if(requestsPerSecond === false)
-        requestsPerSecond = 20;
+        requestsPerSecond = 10;
     if(numRequests === false)
         numRequests = 50;
     if(logFile === true)
