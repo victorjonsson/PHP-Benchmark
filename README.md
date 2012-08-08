@@ -18,7 +18,7 @@ You execute the tests via command line, either using PHP CLI or Nodejs CLI.
 
 ### Dependencies
 
-- PHP version >= 5.2
+- PHP version >= 5.2.1
 - allow_url_fopen has to be enabled in php.ini
 
 
