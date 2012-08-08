@@ -60,9 +60,9 @@ number of loaded classes and included files.
 `$ node php-benchmark http://mywebsite.com/ -n 500` Will do a benchmark test with 500 requests.
 
 `$ node php-benchmark http://mywebsite.com/ -s 20` Will start 20 requests per second until all requests is
-made (default is 10 requests per second). When doing this test to find out the performance of your PHP code
-rather then load testing your server infrastructure it might be good to set this option as low as 1-2 requests per second
-if your server has very limited resources.
+made. If you're doing this test to monitor the performance of your PHP code
+(rather then load testing your server infrastructure) and having limited server resources it might be good to set this 
+option as low as 1-2 requests per second.
 
 `$ node php-benchmark http://mywebsite.com/ -nu` Will prevent the use of unique URL:s when requesting the application.
 
