@@ -212,7 +212,7 @@ else {
             });
 
             if(request.connection != undefined) {
-                request.connection.setTimelog(8000, function() {
+                request.connection.setTimeout(8000, function() {
                     failed.push('Request time out');
                     this.abort();
                     whenAllRequestsFinished(true);
