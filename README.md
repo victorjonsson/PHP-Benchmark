@@ -52,7 +52,11 @@ number of loaded classes and included files.
 
 ### Node Command Line Tool
 
-The execution of the test goes of course much faster if you use the nodejs CLI. First of all you need to [install node](http://nodejs.org/#download) if you haven't already.
+The execution of the test goes much faster if you use the nodejs CLI. First of all you need 
+to [install node](http://nodejs.org/#download) if you haven't already. After that you have installed node you have to
+download the [nodejs script](https://raw.github.com/victorjonsson/PHP-Benchmark/master/php-benchmark) to your server, name
+the file *php-benchmark*. Then navigate to the directory where your nodejs script is located and run one of the 
+following commands:
 
 `$ node php-benchmark http://mywebsite.com/` Will do a benchmark test with 50 requests that gives you average page generation time, memory peak,
 number of loaded classes and included files.
@@ -72,6 +76,7 @@ option as low as 1-2 requests per second.
 
 `$ node php-benchmark http://mywebsite.com/ -f test.log` Will write ouput to log file test.log in current working directory.
 
+*All options can of course be used together as well, these commands are only simple examples.*
 
 ## Display benchmark data on page load
 
