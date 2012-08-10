@@ -116,8 +116,6 @@ if(empty($_SERVER['REMOTE_ADDR'])) {
             out($message);
 
             $fail_key = $status_message ? $status_message : 'unknown';
-            if(empty($failed[$fail_key]))
-                $failed[$fail_key] = array();
             $failed[$fail_key][] = $message;
 
         }
@@ -125,8 +123,6 @@ if(empty($_SERVER['REMOTE_ADDR'])) {
             $data_parts = explode('[phpbenchmark', $html);
             if(count($data_parts) == 1) {
                 $message = sprintf('Request #%d failed for unknown reason, response body missing php benchmark data', $i);
-                if(empty($failed['unknown']))
-                    $failed['unknown'] = array();
                 $failed['unkown'][] = $message;
                 out($message);
                 $request_success = false;
@@ -176,10 +172,11 @@ if(empty($_SERVER['REMOTE_ADDR'])) {
         $total_mem = bcadd($total_mem, $d['memory'], 4);
         $total_files += $d['files'];
         $total_classes += $d['classes'];
+        
         if($top_file_includes < $d['files'])
             $top_file_includes = $d['files'];
-        if($top_loaded_classes < $d['classes']) ;
-        $top_loaded_classes = $d['classes'];
+        if($top_loaded_classes < $d['classes'])
+            $top_loaded_classes = $d['classes'];
         if(bccomp((string)$top_mem, (string)$d['memory'], 5) == -1)
             $top_mem = $d['memory'];
         if(bccomp((string)$top_time, (string)$d['time'], 5) == -1)
