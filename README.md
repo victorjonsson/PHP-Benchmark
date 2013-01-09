@@ -32,7 +32,7 @@ If you want to take snapshots from the benchmark data during the request you may
 
 Inserting some snapshots in the source code of WordPress gave me the following benchmark data
 
-![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-1.png)
+![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-2.png)
 
 
 #### Stress test using command line (nodejs)
