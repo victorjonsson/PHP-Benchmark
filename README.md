@@ -5,6 +5,38 @@ This library contains classes used to compare algorithms and benchmark your appl
 
 ## Benchmarking
 
+Use this library to stress test your application or to retrieve benchmark data upon page load.
+
+### Setup
+
+Either [download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server or 
+install it in your projcet using [composer](http://getcomposer.org/)
+
+
+### Retrieve benchmark data upon page load
+
+Include the file init.php in the very beginning of the first file that receives the request in your
+application (this is usually index.php). Then open load the address of your website in the browser but remember to add
+the query parameters `php-benchmark-test=1&display-data=1`. Doing this will display the benchmark data in the right corner
+of your website
+
+![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-1.png)
+
+#### Taking snapshots
+
+If you want to take snapshots from the benchmark data during the request you may do so by adding the following code.
+
+```php
+ \PHPBenchmark\Monitor::instance()->snapshot('Bootstrap finished');
+````
+
+Inserting some snapshots in the source code of WordPress gave me the following benchmark data
+
+![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-1.png)
+
+
+#### Stress test using command line (nodejs)
+
 Gives you information about average memory peaks and time spent on page generation. The test will do a number of requests to your application with a query parameter
 that tells the benchmark script to monitor the time and memory consumption during the request. When all requests
 is finished you will get the following information:
@@ -17,23 +49,6 @@ is finished you will get the following information:
  - The highest time spent on generating the page during the test
  - The number of failed requests (timeout or http status other then 200)
 
-You execute the tests via command line, either using PHP CLI or Nodejs CLI.
-
-
-### Setup
-
- 1. Download the [script](https://raw.github.com/victorjonsson/PHP-Benchmark/master/php-benchmark.php) to your server.
- 2. Open the file that is the first file to recieve the application request (this is usually index.php).
- 3. Include the benchmark script in the top of the file.
-
-
-### Usage
-
-#### Retrieve benchmark data upon page load
-
-Install this package somewhere on your server using composer
-
-#### Stress test using command line (nodejs)
 
 First of all you need to [install node](http://nodejs.org/#download) if you haven't already. After that you have installed node you have to
 download the [nodejs script](https://raw.github.com/victorjonsson/PHP-Benchmark/master/php-benchmark) to your server, name
