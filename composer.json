@@ -1,0 +1,21 @@
+{
+    "name":        "phpbenchmark/phpbenchmark",
+    "type":        "library",
+    "description": "Easy to use benchmark toolkit for your PHP-application. This library contains classes for comparing algorithms as well as benchmarking application responses",
+    "keywords":    ["test", "benchmark", "performance", "profiler"],
+    "homepage":    "http://victorjonsson.github.com/PHP-Benchmark/",
+    "version":      "1.0.0",
+    "license":      "MIT",
+    "authors": [{
+        "name":  "Victor Jonsson",
+        "email": "kontakt@victorjonsson.se",
+        "role":  "Developer"
+    }],
+    "require": {
+        "php": ">= 5.3"
+    },
+    "bin": ["./php-benchmark"],
+    "autoload": {
+        "psr-0": {"PHPBenchmark": "lib/"}
+    }
+}
