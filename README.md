@@ -7,16 +7,12 @@ This library contains classes used to compare algorithms and benchmark your appl
 
 ### Setup
 
-Either [download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server or 
-install it in your projcet using [composer](http://getcomposer.org/)
-
-
-### Retrieve benchmark data upon page load
-
-Include the file init.php in the very beginning of the first file that receives the request in your
-application (this is usually index.php). Then open load the address of your website in the browser but remember to add
-the query parameters `php-benchmark-test=1&display-data=1`. Doing this will display the benchmark data in the right corner
-of your website
+1. Either [download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server or 
+install it in your project using [composer](http://getcomposer.org/)
+2. Include the file init.php in the very beginning of the first file that receives the request to your
+application (this is usually index.php). Then load the address of your website in the browser with the 
+query parameters `php-benchmark-test=1&display-data=1` and the benchmark data will be displayed in the upper left corner
+of your website.
 
 ![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-1.png)
 
@@ -35,7 +31,8 @@ Inserting some snapshots in the source code of WordPress gave me the following b
 
 ### Stress test using command line (nodejs)
 
-Gives you information about average memory peaks and time spent on page generation. The test will do a number of requests to your application with a query parameter
+By using the (nodejs) command line tool you'll get information about average memory peaks and time spent on page 
+generation. The test will do a number of requests to your application with a query parameter
 that tells the benchmark script to monitor the time and memory consumption during the request. When all requests
 is finished you will get the following information:
 
@@ -82,7 +79,7 @@ you have to do is to  include the file `lib/autoload.php` to be able to load the
 
 ### Setup (composer)
 
-Not so much you need to do, add the dependency "phpbenchmark/phpbenchmark" to composer.json and your set to go.
+Not so much you need to do, add the dependency "phpbenchmark/phpbenchmark" to composer.json and your'e set to go.
 
 ### Example code
 
@@ -103,14 +100,13 @@ FunctionComparison::load()
 
 ```
 
-Load this file in the browser or call it via command line and you will find out that `stream_resolve_include_pate` wins
+Load a file having this code in the browser or call it via command line and you will find out that `stream_resolve_include_pate` wins
 the game, being about 30-35% faster.
 
 
 ### Extending AbstractFunctionComparison 
 
 If you would want to manage a large collections of tests you can create a class (extending [AbstractFunctionComparison](https://github.com/victorjonsson/PHP-Benchmark/blob/master/lib/PHPBenchmark/AbstractFunctionComparison.php))
-for each test. Put all classes in the same directory and call `FunctionComparison::runTests( $path_to_class_directory )` and
-all you'll be able to execute all tests with one request.
-
+for each test. Put all classes in the same directory and call `FunctionComparison::runTests( $path_to_class_directory )` and 
+you'll be able to execute all tests in one request.
 
