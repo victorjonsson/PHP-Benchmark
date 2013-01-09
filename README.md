@@ -5,8 +5,6 @@ This library contains classes used to compare algorithms and benchmark your appl
 
 ## Benchmarking
 
-Use this library to stress test your application or to retrieve benchmark data upon page load.
-
 ### Setup
 
 Either [download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server or 
@@ -35,7 +33,7 @@ Inserting some snapshots in the source code of WordPress gave me the following b
 ![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-2.png)
 
 
-#### Stress test using command line (nodejs)
+### Stress test using command line (nodejs)
 
 Gives you information about average memory peaks and time spent on page generation. The test will do a number of requests to your application with a query parameter
 that tells the benchmark script to monitor the time and memory consumption during the request. When all requests
@@ -75,7 +73,33 @@ option as low as 1-2 requests per second.
 
 *All options can of course be used together as well, these commands are only simple examples.*
 
-## Display benchmark data on page load
+## Comparing algorithms
 
-Benchmark data will be displayed in the browser upon page load if you add query
-parameters `?php-benchmark-test=1&display-test-data=1` to the URL of your application.
+### Setup (manually)
+
+[Download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server. After that all
+you have to do is to  include the file `lib/autoload.php` to be able to load the classes you want to use.
+
+### Setup (composer)
+
+Not so much you need to do, add the dependency "phpbenchmark/phpbenchmark" to composer.json and your set to go.
+
+### Example
+
+```php
+
+require __DIR__.'/vendor/autoload.php';
+
+use \PHPBenchmark\FunctionComparison;
+
+FunctionComparison::load()
+    ->setFunctionA('stream_resolve_include_path', function() {
+        $bool = stream_resolve_include_path(__FILE__) !== false;
+    })
+    ->setFunctionB('file_exists', function() {
+        $bool = file_exists(__FILE__);
+    })
+    ->exec();
+
+```
+
