@@ -84,7 +84,7 @@ you have to do is to  include the file `lib/autoload.php` to be able to load the
 
 Not so much you need to do, add the dependency "phpbenchmark/phpbenchmark" to composer.json and your set to go.
 
-### Example
+### Example code
 
 ```php
 
@@ -102,4 +102,15 @@ FunctionComparison::load()
     ->exec();
 
 ```
+
+Load this file in the browser or call it via command line and you will find out that `stream_resolve_include_pate` wins
+the game, being about 30-35% faster.
+
+
+### Extending AbstractFunctionComparison 
+
+If you would want to manage a large collections of tests you can create a class (extending [AbstractFunctionComparison](https://github.com/victorjonsson/PHP-Benchmark/blob/master/lib/PHPBenchmark/AbstractFunctionComparison.php))
+for each test. Put all classes in the same directory and call `FunctionComparison::runTests( $path_to_class_directory )` and
+all you'll be able to execute all tests with one request.
+
 
