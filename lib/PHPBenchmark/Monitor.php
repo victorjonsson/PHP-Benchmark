@@ -68,7 +68,6 @@ class Monitor {
      */
     public function shutDown()
     {
-        $log = '';
         $data = $this->getData();
         if( $this->displayAsHTML ) {
             $log = $this->generateHTML($data);
