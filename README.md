@@ -100,8 +100,7 @@ FunctionComparison::load()
 
 ```
 
-Load a file having this code in the browser or call it via command line and you will find out that `stream_resolve_include_pate` wins
-the game, being about 30-35% faster.
+Load a file having this code in the browser or call it via command line and you will find out that `stream_resolve_include_pate` probably wins the game.
 
 
 ### Extending AbstractFunctionComparison 
