@@ -89,15 +89,16 @@ require __DIR__.'/vendor/autoload.php';
 
 use \PHPBenchmark\FunctionComparison;
 
-FunctionComparison::load()
-    ->setFunctionA('stream_resolve_include_path', function() {
-        $bool = stream_resolve_include_path(__FILE__) !== false;
-    })
-    ->setFunctionB('file_exists', function() {
-        $bool = file_exists(__FILE__);
-    })
-    ->exec();
+$result = FunctionComparison::load()
+            ->setFunctionA('stream_resolve_include_path', function() {
+                $bool = stream_resolve_include_path(__FILE__) !== false;
+            })
+            ->setFunctionB('file_exists', function() {
+                $bool = file_exists(__FILE__);
+            })
+            ->exec();
 
+print_r($result);
 ```
 
 Load a file having this code in the browser or call it via command line and you will find out which function that wins the game.
