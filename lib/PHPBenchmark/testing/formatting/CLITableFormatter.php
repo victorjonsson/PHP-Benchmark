@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Class that can interpret \PHPBenchmark\testing\TestResult
- * into a table that can be used as console output
+ * and output a table that can be used in a console program
  *
  * @package PHPBenchmark
  * @author Victor Jonsson (http://victorjonsson.se)

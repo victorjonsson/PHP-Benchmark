@@ -4,7 +4,7 @@ namespace PHPBenchmark\testing\formatting;
 
 /**
  * Class that can interpret \PHPBenchmark\testing\TestResult
- * into an HTML formatted representation of the result
+ * and output an HTML formatted representation of the result
  *
  * @package PHPBenchmark
  * @author Victor Jonsson (http://victorjonsson.se)

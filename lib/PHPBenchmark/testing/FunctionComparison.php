@@ -8,7 +8,7 @@ use PHPBenchmark\Utils;
 
 /**
  * Abstract class that can be used to compare the performance
- * between different algorithms
+ * between different algorithms.
  *
  * @package PHPBenchmark
  * @author Victor Jonsson (http://victorjonsson.se)
@@ -59,11 +59,11 @@ class FunctionComparison
 
     /**
      * Will run the test and echo the result. It will display the result
-     * in different format depending on the context which in this
+     * in different formats depending on the context which in the
      * function was called.
      *
      * You can alter the formatting of the result by using the function
-     * setFormatter(), giving it an object implementing \PHPBenchmark\formatting\FormatterInterface
+     * setFormatter(), giving it an object implementing \PHPBenchmark\testing\formatting\FormatterInterface
      *
      * @see FunctionComparison::run()
      */
