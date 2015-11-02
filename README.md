@@ -62,4 +62,4 @@ Load a file having this code in the browser or call it via command line and you 
 find out which function that wins the game.
 
 You can also call `->run()` to get hold of an object representing the results of the comparison test.
-
+Read more in the [docs](https://github.com/victorjonsson/PHP-Benchmark/blob/master/DOCS.md#class-phpbenchmarktestingfunctioncomparison).
