@@ -30,14 +30,9 @@ Inserting some snapshots in the source code of WordPress gave me the following b
 
 ## Comparing algorithms
 
-### Setup (manually)
-
-[Download](https://github.com/victorjonsson/PHP-Benchmark/archive/master.zip) the library to your server. After that all
-you have to do is to  include the file `lib/autoload.php` to be able to load the classes you want to use.
-
 ### Setup (composer)
 
-Not so much you need to do, add the dependency "phpbenchmark/phpbenchmark" to composer.json and your'e set to go.
+Add the dependency "phpbenchmark/phpbenchmark" to composer.json and your'e set to go.
 
 ### Example code
 
@@ -58,7 +53,7 @@ FunctionComparison::load()
 
 ```
 
-Load a file having this code in the browser or call it via command line and you will
+Load a file having this code in the browser, or call it via command line, and you will
 find out which function that wins the game.
 
 You can also call `->run()` to get hold of an object representing the results of the comparison test.
