@@ -24,6 +24,11 @@ class TestResult
     private $tests;
 
     /**
+     * @var TestRunResult[]
+     */
+    private $computedResults;
+
+    /**
      */
     function __construct()
     {
@@ -35,6 +40,7 @@ class TestResult
      */
     function addTestRunResult(TestRunResult $result)
     {
+        $this->computedResults = null;
         $this->tests->insert($result, $result->getTime());
     }
 
@@ -43,16 +49,35 @@ class TestResult
      */
     function getResults()
     {
-        /** @var TestRunResult $result */
-        $runs = iterator_to_array($this->tests);
-        foreach($runs as $i => $result) {
-            if( isset($runs[$i+1]) ) {
-                $timesFaster = $this->calculateTimesFaster($result->getTime(), $runs[$i+1]->getTime());
-                $result->setTimesFaster( $timesFaster );
-                $result->toggleIsWinner($i==0);
+        if( $this->computedResults === null ) {
+            /** @var TestRunResult $result */
+            $runs = iterator_to_array($this->tests);
+            foreach($runs as $i => $result) {
+                if( isset($runs[$i+1]) ) {
+                    $timesFaster = $this->calculateTimesFaster($result->getTime(), $runs[$i+1]->getTime());
+                    $result->setTimesFaster( $timesFaster );
+                    $result->toggleIsWinner($i==0);
+                }
             }
+            $this->computedResults = array_reverse($runs);
         }
-        return array_reverse($runs);
+        return $this->computedResults;
+    }
+
+    /**
+     * @return TestRunResult
+     */
+    public function getWinner()
+    {
+        return current(array_slice($this->getResults(), 0, 1));
+    }
+
+    /**
+     * @return TestRunResult
+     */
+    public function getLooser()
+    {
+        return current(array_slice($this->getResults(), -1));
     }
 
     /**

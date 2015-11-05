@@ -2,7 +2,6 @@
 namespace PHPBenchmark\testing;
 
 use PHPBenchmark\testing\formatting\FormatterInterface;
-use PHPBenchmark\Monitor;
 use PHPBenchmark\Utils;
 
 
@@ -145,7 +144,7 @@ class FunctionComparison
     public static function load($numRuns=500)
     {
         $self = new self();
-        $self->setNumRuns(500);
+        $self->setNumRuns($numRuns);
         return $self;
     }
 
