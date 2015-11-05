@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: victorjonsson
- * Date: 01/11/15
- * Time: 20:29
- */
-
 namespace PHPBenchmark\testing;
 
 /**
