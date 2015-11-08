@@ -60,6 +60,7 @@ class FunctionComparisonTest extends PHPUnit_Framework_TestCase {
         $htmlFormatter = new HTMLFormatter();
         $formatted = $htmlFormatter->format($this->funcComparison->run());
         $this->assertNotEmpty($formatted);
+        $this->assertTrue(strpos($formatted, '<table') !== false);
     }
 
     function testCLIFormatter()
@@ -67,6 +68,7 @@ class FunctionComparisonTest extends PHPUnit_Framework_TestCase {
         $cliFormatter = new CLITableFormatter();
         $formatted = $cliFormatter->format($this->funcComparison->run());
         $this->assertNotEmpty($formatted);
+        $this->assertTrue(strpos($formatted, '<table') === false);
     }
 
     function testExecSendingCorrectlyFormattedOutput()
@@ -74,6 +76,6 @@ class FunctionComparisonTest extends PHPUnit_Framework_TestCase {
         ob_start();
         $this->funcComparison->exec();
         $output = ob_get_clean();
-        $this->assertTrue(strpos($output, '<table') === false, 'Output should not contain html');   
+        $this->assertTrue(strpos($output, '<table') === false, 'Output should not contain html');
     }
 }

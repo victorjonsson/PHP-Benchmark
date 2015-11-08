@@ -2,6 +2,7 @@
 namespace PHPBenchmark\testing;
 
 use PHPBenchmark\testing\formatting\FormatterInterface;
+use PHPBenchmark\testing\metrics\PerformanceSnapshot;
 use PHPBenchmark\Utils;
 
 
@@ -104,20 +105,20 @@ class FunctionComparison
      */
     private function runFunction($func, $desc)
     {
-        $start_mem_usage = memory_get_usage();
-        $start_time = Utils::getMicroTime();
+        $initSnapShot = new PerformanceSnapshot();
 
         for ($i = $this->numRuns; $i > 0; $i--)
             $func();
 
-        $memory = memory_get_usage() - $start_mem_usage;
+        $snapShot = new PerformanceSnapshot($initSnapShot);
 
         return new TestRunResult(
             $desc,
-            bcsub(Utils::getMicroTime(), $start_time, 4),
-            round($memory / 1024 / 1024, 4)
+            $snapShot->timePassed(),
+            $snapShot->memoryAllocationDifference()
         );
     }
+
 
     /**
      * The number of times each function will be called
@@ -152,7 +153,7 @@ class FunctionComparison
 
 
     /**
-     * @deprecated
+     * @deprecated Use FunctionComparison::addFunction() instead
      * @see FunctionComparison::addFunction()
      */
     public function setFunctionA($name, $func)
@@ -161,7 +162,7 @@ class FunctionComparison
     }
 
     /**
-     * @deprecated
+     * @deprecated use FunctionComparison::addFunction() instead
      * @see FunctionComparison::addFunction()
      */
     public function setFunctionB($name, $func)
