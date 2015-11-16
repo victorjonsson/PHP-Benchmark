@@ -1,4 +1,3 @@
-
 ## Table of contents
 
 - [\PHPBenchmark\Monitor](#class-phpbenchmarkmonitor)
@@ -10,6 +9,9 @@
 - [\PHPBenchmark\testing\formatting\CLITableFormatter](#class-phpbenchmarktestingformattingclitableformatter)
 - [\PHPBenchmark\testing\formatting\FormatterInterface (interface)](#interface-phpbenchmarktestingformattingformatterinterface)
 - [\PHPBenchmark\testing\formatting\HTMLFormatter](#class-phpbenchmarktestingformattinghtmlformatter)
+- [\PHPBenchmark\testing\metrics\PerformanceSnapshot](#class-phpbenchmarktestingmetricsperformancesnapshot)
+- [\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface (interface)](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)
+- [\PHPBenchmark\testing\metrics\PerformanceSnapshotNullObject](#class-phpbenchmarktestingmetricsperformancesnapshotnullobject)
 
 <hr /> 
 ### Class: \PHPBenchmark\Monitor
@@ -33,7 +35,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public static | <strong>getMicroTime()</strong> : <em>\PHPBenchmark\float</em> |
+| public static | <strong>getMicroTime()</strong> : <em>float</em> |
 
 <hr /> 
 ### <strike>Class: \PHPBenchmark\testing\AbstractFunctionComparison (abstract)</strike>
@@ -82,10 +84,10 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>__construct(</strong><em>string</em> <strong>$description</strong>, <em>\PHPBenchmark\testing\float</em> <strong>$time</strong>, <em>\PHPBenchmark\testing\float</em> <strong>$memUsage</strong>)</strong> : <em>void</em><br /><em>TestResult constructor.</em> |
+| public | <strong>__construct(</strong><em>string</em> <strong>$description</strong>, <em>float</em> <strong>$time</strong>, <em>float</em> <strong>$memUsage</strong>)</strong> : <em>void</em><br /><em>TestResult constructor.</em> |
 | public | <strong>getDescription()</strong> : <em>string</em> |
-| public | <strong>getMemUsage()</strong> : <em>\PHPBenchmark\testing\float</em> |
-| public | <strong>getTime()</strong> : <em>\PHPBenchmark\testing\float</em> |
+| public | <strong>getMemUsage()</strong> : <em>float</em> |
+| public | <strong>getTime()</strong> : <em>float</em> |
 | public | <strong>getTimesFaster()</strong> : <em>int</em> |
 | public | <strong>isWinner()</strong> : <em>bool</em> |
 | public | <strong>setTimesFaster(</strong><em>int</em> <strong>$timesFaster</strong>)</strong> : <em>void</em> |
@@ -121,3 +123,62 @@
 | public | <strong>format(</strong><em>mixed</em> <strong>$result</strong>)</strong> : <em>void</em> |
 
 *This class implements [\PHPBenchmark\testing\formatting\FormatterInterface](#interface-phpbenchmarktestingformattingformatterinterface)*
+
+<hr /> 
+### Class: \PHPBenchmark\testing\metrics\PerformanceSnapshot
+
+> Object containing data that describes performance. This object represents a state that is relative to the previously created snapshot (given on construct)
+
+###### Example
+```php
+<?php
+ $initSnapShot = new PerformanceSnapShot();
+ doSomeHeavyLifting();
+ $snapShot = new PerformanceSnapShot($initSnapShot);
+ echo 'It took ' .$snapShot->getTimePassed(). ' seconds.';
+ doMoreHeavyLifting();
+ $newSnapShot = new PerformanceSnapShot($snapShot);
+ echo 'It took ' .$snapShot->getTimePassed(). ' seconds.';
+````
+
+| Visibility | Function |
+|:-----------|:---------|
+| public | <strong>__construct(</strong><em>[\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)/null/[\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)</em> <strong>$prev=null</strong>)</strong> : <em>void</em><br /><em>PerformanceSnapshot constructor.</em> |
+| public | <strong>creationTime()</strong> : <em>void</em> |
+| public | <strong>memoryAllocated()</strong> : <em>void</em> |
+| public | <strong>memoryAllocationDifference()</strong> : <em>void</em> |
+| public | <strong>numClassesDeclared()</strong> : <em>void</em> |
+| public | <strong>numFilesIncluded()</strong> : <em>void</em> |
+| public | <strong>numTotalClassesDeclared()</strong> : <em>void</em> |
+| public | <strong>numTotalFilesIncluded()</strong> : <em>void</em> |
+| public | <strong>timePassed()</strong> : <em>void</em> |
+
+*This class implements [\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)*
+
+<hr /> 
+### Interface: \PHPBenchmark\testing\metrics\PerformanceSnapshotInterface
+
+> Object containing data that might describe the performance
+
+| Visibility | Function |
+|:-----------|:---------|
+| public | <strong>abstract creationTime()</strong> : <em>float</em><br /><em>Time stamp of when this snap shot was taken (in microseconds)</em> |
+| public | <strong>abstract memoryAllocated()</strong> : <em>float</em><br /><em>Total amount of memory allocated at the given point the snap shot was taken</em> |
+| public | <strong>abstract memoryAllocationDifference()</strong> : <em>float</em><br /><em>The change in memory allocation since last snap shot</em> |
+| public | <strong>abstract numClassesDeclared()</strong> : <em>int</em><br /><em>The number of loaded classes since last snap shot</em> |
+| public | <strong>abstract numFilesIncluded()</strong> : <em>int</em><br /><em>The number of files included since last snap shot</em> |
+| public | <strong>abstract numTotalClassesDeclared()</strong> : <em>int</em> |
+| public | <strong>abstract numTotalFilesIncluded()</strong> : <em>int</em> |
+| public | <strong>abstract timePassed()</strong> : <em>float</em><br /><em>Time passed since last snapshot (in seconds)</em> |
+
+<hr /> 
+### Class: \PHPBenchmark\testing\metrics\PerformanceSnapshotNullObject
+
+| Visibility | Function |
+|:-----------|:---------|
+| public | <strong>__construct()</strong> : <em>void</em> |
+
+*This class extends [\PHPBenchmark\testing\metrics\PerformanceSnapshot](#class-phpbenchmarktestingmetricsperformancesnapshot)*
+
+*This class implements [\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)*
+
