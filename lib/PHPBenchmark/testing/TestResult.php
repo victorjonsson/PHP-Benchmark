@@ -1,6 +1,8 @@
 <?php
 namespace PHPBenchmark\testing;
 
+use SplPriorityQueue;
+
 /**
  * Object representing a test result
  *
@@ -12,7 +14,7 @@ class TestResult
 {
 
     /**
-     * @var \splPriorityQueue
+     * @var splPriorityQueue
      */
     private $tests;
 
@@ -25,7 +27,7 @@ class TestResult
      */
     function __construct()
     {
-        $this->tests = new \SplPriorityQueue();
+        $this->tests = new SplPriorityQueue();
     }
 
     /**
@@ -42,14 +44,14 @@ class TestResult
      */
     function getResults()
     {
-        if( $this->computedResults === null ) {
-            /** @var TestRunResult $result */
+        if (null === $this->computedResults) {
+            /** @var TestRunResult[] $runs */
             $runs = iterator_to_array($this->tests);
             foreach($runs as $i => $result) {
                 if( isset($runs[$i+1]) ) {
-                    $timesFaster = $this->calculateTimesFaster($result->getTime(), $runs[$i+1]->getTime());
-                    $result->setTimesFaster( $timesFaster );
-                    $result->toggleIsWinner($i==0);
+                    $timesFaster = $this->calculateTimesFaster($result, $runs[$i+1]);
+                    $result->setTimesFaster($timesFaster);
+                    $result->toggleIsWinner(0==$i);
                 }
             }
             $this->computedResults = array_reverse($runs);
@@ -74,12 +76,14 @@ class TestResult
     }
 
     /**
-     * @param int $faster
-     * @param int $slower
-     * @return float
+     * @param TestRunResult $faster
+     * @param TestRunResult $slower
+     * @return string
      */
-    private function calculateTimesFaster($faster, $slower)
+    private function calculateTimesFaster(TestRunResult $faster, TestRunResult $slower)
     {
-        return (bcdiv(bcsub($slower, $faster, 4), $faster, 2) * 100).'%';
+        $slowerTime = $slower->getTime();
+        $fasterTime = $faster->getTime();
+        return (bcdiv(bcsub($slowerTime, $fasterTime, 4), $fasterTime, 2) * 100).'%';
     }
 }

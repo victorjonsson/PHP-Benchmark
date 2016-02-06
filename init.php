@@ -1,6 +1,35 @@
 <?php
+/**
+ * File used to initiate performance monitoring.
+ *
+ * @website https://github.com/victorjonsson/PHP-Benchmark/
+ * @package PHPBenchmark
+ * @author Victor Jonsson (http://victorjonsson.se)
+ * @license MIT
+ */
 
-if( isset($_GET['php-benchmark-test']) ) {
-    require __DIR__.'/lib/PHPBenchmark/Monitor.php';
-    \PHPBenchmark\Monitor::instance()->init( !empty($_GET['display-data']) );
+// Only activate monitor if query string contains "php-benchmark-test"
+if (empty($_GET['php-benchmark-test']) ) {
+    return;
 }
+
+// Load class loader
+$localAutLoaderFile = __DIR__.'/vendor/autoload.php';
+if (file_exists($localAutLoaderFile)) {
+    require_once $localAutLoaderFile;
+} else {
+    require_once __DIR__.'/../../autoload.php';
+}
+
+
+use League\Event\Event;
+use PHPBenchmark\HtmlView;
+use PHPBenchmark\Monitor;
+use PHPBenchmark\MonitorInterface;
+
+Monitor::instance()
+    ->init()
+    ->addListener(Monitor::EVENT_SHUT_DOWN, function(Event $evt, MonitorInterface $monitor) {
+        $htmlView = new HtmlView();
+        echo $htmlView->getView($monitor);
+    });

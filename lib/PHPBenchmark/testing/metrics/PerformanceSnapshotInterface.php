@@ -14,52 +14,24 @@ namespace PHPBenchmark\testing\metrics;
  * @author Victor Jonsson (http://victorjonsson.se)
  * @license MIT
  */
-interface PerformanceSnapshotInterface
+interface PerformanceSnapshotInterface extends PerformanceInfoInterface
 {
     /**
      * The number of loaded classes since last snap shot
      * @return int
      */
-    public function numClassesDeclared();
-
-    /**
-     * @return int
-     */
-    public function numTotalClassesDeclared();
+    public function numClassesDeclaredSincePreviousSnapshot();
 
     /**
      * The number of files included since last snap shot
      * @return int
      */
-    public function numFilesIncluded();
-
-    /**
-     * @return int
-     */
-    public function numTotalFilesIncluded();
-
-    /**
-     * Time passed since last snapshot (in seconds)
-     * @return float
-     */
-    public function timePassed();
-
-    /**
-     * Time stamp of when this snap shot was taken (in microseconds)
-     * @return float
-     */
-    public function creationTime();
+    public function numFilesIncludedSincePreviousSnapshot();
 
     /**
      * The change in memory allocation since last snap shot
      * @return float
      */
     public function memoryAllocationDifference();
-
-    /**
-     * Total amount of memory allocated at the given point the snap shot was taken
-     * @return float
-     */
-    public function memoryAllocated();
 
 }

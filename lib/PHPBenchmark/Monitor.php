@@ -1,6 +1,11 @@
 <?php
 namespace PHPBenchmark;
 
+use League\Event\Emitter;
+use PHPBenchmark\testing\metrics\PerformanceInfo;
+use PHPBenchmark\testing\metrics\PerformanceSnapshot;
+use PHPBenchmark\testing\metrics\PerformanceSnapshotInterface;
+
 
 /**
  * Class used to collect benchmark data over a given time
@@ -9,8 +14,12 @@ namespace PHPBenchmark;
  * @author Victor Jonsson (http://victorjonsson.se)
  * @license MIT
  */
-class Monitor
+class Monitor extends Emitter implements MonitorInterface
 {
+    /**
+     * @var PerformanceSnapshotInterface[]
+     */
+    private $snapShots = array();
 
     /**
      * @var float
@@ -18,113 +27,23 @@ class Monitor
     private $startTime;
 
     /**
-     * @var array
+     * Initiate the performance monitoring
+     * @param bool|true $registerShutDownFunc
+     * @return $this
      */
-    private $snapShots = array();
-
-    /**
-     * @var bool
-     */
-    private $displayAsHTML = false;
-
-    /**
-     * @var string
-     */
-    private $dataTemplateCSS = 'position: fixed; top: 20px; left:20px; box-shadow:0 0 8px #555; background: #FFF; padding: 5px; color:#000 !important; z-index: 9999';
-
-    /**
-     */
-    public function __construct()
+    public function init($registerShutDownFunc=true)
     {
-        $this->startTime = Utils::getMicroTime();
-    }
+        $this->snapShots['Start'] = new PerformanceSnapshot();
+        $this->startTime = $this->snapShots['Start']->creationTime();
 
-    /**
-     * @param string $dataTemplateCSS
-     */
-    public function setDataTemplateCSS($dataTemplateCSS)
-    {
-        $this->dataTemplateCSS = $dataTemplateCSS;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDataTemplateCSS()
-    {
-        return $this->dataTemplateCSS;
-    }
-
-    /**
-     * @param bool $displayAsHTML
-     */
-    public function init($displayAsHTML = false)
-    {
-        $this->displayAsHTML = $displayAsHTML;
-        register_shutdown_function(array($this, 'shutDown'));
-    }
-
-    /**
-     * Display benchmark data to browser or log
-     */
-    public function shutDown()
-    {
-        $data = $this->getData();
-        if ($this->displayAsHTML) {
-            $log = $this->generateHTML($data);
-        } else {
-            $log = sprintf(
-                '[phpbenchmark time=%f memory=%f files=%d classes=%d]',
-                $data['time'],
-                $data['memory'],
-                $data['files'],
-                $data['classes']
-            );
+        if ($registerShutDownFunc) {
+            $self = $this;
+            register_shutdown_function(function() use($self) {
+                $self->emit(self::EVENT_SHUT_DOWN, $self);
+            });
         }
 
-        echo $log;
-    }
-
-    /**
-     * @param array $data
-     * @return string
-     */
-    private function generateHTML($data)
-    {
-        $table = '<table><thead><tr style="background:#EEE;"><td style="padding:5px;">&nbsp;</td><td style="padding:5px;">Time</td><td style="padding:5px;">Memory</td><td style="padding:5px;">Files</td><td style="padding:5px; text-align:right">Classes</td><td style="padding:5px; text-align:right">%</td></tr></thead><tbody>';
-
-        $table_row = '<tr><td style="padding:5px 10px 5px 5px">%s</td><td style="padding:5px">%s</td style="padding:5px"><td style="padding:5px">%s</td style="padding:5px"><td style="padding:5px">%s</td><td style="padding:5px; text-align:right">%s</td><td style="padding:5px; text-align:right">%s</td></tr>';
-
-        if (!empty($this->snapShots)) {
-            $last_proc = 0;
-            foreach ($this->snapShots as $name => $snapshot) {
-                $proc = (100 * bcdiv($snapshot['time'], $data['time'], 2));
-                $table .= sprintf(
-                    $table_row,
-                    $name,
-                    $snapshot['time'],
-                    $snapshot['memory'],
-                    $snapshot['files'],
-                    $snapshot['classes'],
-                    $proc . '% <em style="font-size:70%; color:#777">(' . ($proc - $last_proc) . '%)</em>'
-                );
-                $last_proc = $proc;
-            }
-        }
-
-        $table .= sprintf(
-            $table_row,
-            'Request finished',
-            $data['time'],
-            $data['memory'],
-            $data['files'],
-            $data['classes'],
-            '100%' . (isset($last_proc) ? (' <em style="font-size:70%; color:#777">(' . (100 - $last_proc) . '%)</em>') : '')
-        );
-
-        $table .= '</tbody></table>';
-
-        return sprintf('<div id="php-benchmark-result" style="%s">%s</div>', $this->dataTemplateCSS, $table);
+        return $this;
     }
 
     /**
@@ -132,47 +51,56 @@ class Monitor
      */
     public function snapShot($name)
     {
-        if (empty($this->snapShots)) {
-            $data = array(
-                'time' => $this->startTime,
-                'memory' => 0,
-                'classes' => 0,
-                'files' => 0
-            );
-        } else {
-            $data = current(array_slice($this->snapShots, -1));
-        }
+        $newSnapShot = new PerformanceSnapshot(end($this->snapShots));
+        $this->snapShots[$name] = $newSnapShot;
+    }
 
-        $currentData = $this->getData();
-
-        $this->snapShots[$name] = array(
-            'time' => bcsub(Utils::getMicroTime(), $this->startTime, 4),
-            'memory' => $currentData['memory'],
-            'files' => $currentData['files'] - $data['files'],
-            'classes' => $currentData['classes'] - $data['classes']
+    /**
+     * @inheritDoc
+     */
+    public function getPerformanceInfo()
+    {
+        return new PerformanceInfo(
+            Utils::getMicroTime(),
+            bcsub(Utils::getMicroTime(), $this->startTime, 4),
+            count(get_declared_classes()),
+            count(get_included_files()),
+            round(memory_get_usage() / 1024 / 1024, 4)
         );
     }
 
     /**
-     * Get benchmark data at this point.
-     * @return array
+     * @deprecated Use Monitor::getPerformanceInfo()
+     * @return PerformanceInfo
      */
     public function getData()
     {
-        return array(
-            'time' => bcsub(Utils::getMicroTime(), $this->startTime, 4),
-            'memory' => round(memory_get_usage() / 1024 / 1024, 4),
-            'files' => count(get_included_files()),
-            'classes' => count(get_declared_classes())
-        );
+        return $this->getPerformanceInfo();
     }
 
     /**
-     * @return array
+     * @inheritDoc
+     */
+    public function getSnapShots()
+    {
+        return $this->snapShots;
+    }
+
+    /**
+     * @deprecated Use Monitor::getSnapShots();
+     * @return testing\metrics\PerformanceSnapshotInterface[]
      */
     public function snapShots()
     {
         return $this->snapShots;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function numSnapShots()
+    {
+        return count($this->snapShots);
     }
 
     /**
@@ -182,11 +110,11 @@ class Monitor
 
     /**
      * Singleton instance of this class
-     * @return \PHPBenchmark\Monitor
+     * @return \PHPBenchmark\MonitorInterface
      */
     public static function instance()
     {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;

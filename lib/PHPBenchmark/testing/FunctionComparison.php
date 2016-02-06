@@ -3,11 +3,10 @@ namespace PHPBenchmark\testing;
 
 use PHPBenchmark\testing\formatting\FormatterInterface;
 use PHPBenchmark\testing\metrics\PerformanceSnapshot;
-use PHPBenchmark\Utils;
 
 
 /**
- * Abstract class that can be used to compare the performance
+ * Class that can be used to compare the performance
  * between different algorithms.
  *
  * @package PHPBenchmark
@@ -69,7 +68,7 @@ class FunctionComparison
      */
     public function exec()
     {
-        if( empty($this->formatter) )
+        if (empty($this->formatter))
             $this->loadFormatter();
 
         $result = $this->run();
