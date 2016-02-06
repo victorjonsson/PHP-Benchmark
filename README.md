@@ -11,7 +11,7 @@ This library contains classes used to compare algorithms and benchmark your appl
 install it in your project using [composer](http://getcomposer.org/)
 2. Include the file init.php in the very beginning of the first file that receives the request to your
 application (this is usually index.php). Then load the address of your website in the browser with the 
-query parameters `php-benchmark-test=1&display-data=1` and the benchmark data will be displayed in the upper left corner
+query parameters `php-benchmark-test=1` and the benchmark data will be displayed in the upper left corner
 of your website.
 
 ![Becnhmark 1](http://victorjonsson.github.com/PHP-Benchmark/sc-1.png)
