@@ -14,8 +14,8 @@
     "require": {
         "php": ">=5.4.0",
         "symfony/console": ">=2.7.6",
-        "victorjonsson/markdowndocs": "dev-master",
-        "league/event": "^2.1"
+        "league/event": "^2.1",
+        "victorjonsson/markdowndocs": ">=1.2.0"
     },
     "require-dev" : {
         "phpunit/phpunit": "3.7.23"
