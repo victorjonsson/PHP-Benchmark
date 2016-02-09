@@ -128,7 +128,7 @@ class HtmlView implements PerformanceResultViewInterface
                 text-align: right;
             }
             em {
-                font-size:70%; color:#777
+                font-size:80%; color:#777
             }
             .footer {
                 line-height: 140%;
