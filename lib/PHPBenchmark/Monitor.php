@@ -51,7 +51,8 @@ class Monitor extends Emitter implements MonitorInterface
      */
     public function snapShot($name)
     {
-        $newSnapShot = new PerformanceSnapshot(end($this->snapShots));
+        $previous = end($this->snapShots);
+        $newSnapShot = new PerformanceSnapshot($previous ? $previous : null);
         $this->snapShots[$name] = $newSnapShot;
     }
 
