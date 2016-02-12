@@ -25,7 +25,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>abstract getView(</strong><em>[\PHPBenchmark\MonitorInterface](#interface-phpbenchmarkmonitorinterface)</em> <strong>$monitor</strong>)</strong> : <em>string</em> |
+| public | <strong>getView(</strong><em>[\PHPBenchmark\MonitorInterface](#interface-phpbenchmarkmonitorinterface)</em> <strong>$monitor</strong>)</strong> : <em>string</em> |
 | protected | <strong>getContainerCSS()</strong> : <em>string</em> |
 | protected | <strong>getTableCSS()</strong> : <em>string</em> |
 | protected | <strong>getTableOpeningMarkup()</strong> : <em>string</em> |
