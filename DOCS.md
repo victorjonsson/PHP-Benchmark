@@ -41,7 +41,7 @@
 |:-----------|:---------|
 | public | <strike><strong>getData()</strong> : <em>[\PHPBenchmark\testing\metrics\PerformanceInfo](#class-phpbenchmarktestingmetricsperformanceinfo)</em></strike><br /><em>DEPRECATED - Use Monitor::getPerformanceInfo()</em> |
 | public | <strong>getPerformanceInfo()</strong> : <em>[\PHPBenchmark\testing\metrics\PerformanceInfoInterface](#interface-phpbenchmarktestingmetricsperformanceinfointerface)</em><br /><em>Get benchmark data</em> |
-| public | <strong>getSnapShots()</strong> : <em>\PHPBenchmark\PerformanceSnapshotInterface[]</em> |
+| public | <strong>getSnapShots()</strong> : <em>[\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)[]</em> |
 | public | <strong>init(</strong><em>bool/bool/true</em> <strong>$registerShutDownFunc=true</strong>)</strong> : <em>\PHPBenchmark\$this</em><br /><em>Initiate the performance monitoring</em> |
 | public static | <strong>instance()</strong> : <em>[\PHPBenchmark\MonitorInterface](#interface-phpbenchmarkmonitorinterface)</em><br /><em>Singleton instance of this class</em> |
 | public | <strong>numSnapShots()</strong> : <em>int</em> |
@@ -58,7 +58,7 @@
 | Visibility | Function |
 |:-----------|:---------|
 | public | <strong>getPerformanceInfo()</strong> : <em>[\PHPBenchmark\testing\metrics\PerformanceInfoInterface](#interface-phpbenchmarktestingmetricsperformanceinfointerface)</em><br /><em>Get benchmark data</em> |
-| public | <strong>getSnapShots()</strong> : <em>\PHPBenchmark\PerformanceSnapshotInterface[]</em> |
+| public | <strong>getSnapShots()</strong> : <em>[\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)[]</em> |
 | public | <strong>numSnapShots()</strong> : <em>int</em> |
 | public | <strong>snapShot(</strong><em>string</em> <strong>$name</strong>)</strong> : <em>void</em><br /><em>Save a snapshot of performance metrics at this point in time</em> |
 
