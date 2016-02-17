@@ -42,19 +42,38 @@ require __DIR__.'/vendor/autoload.php';
 
 use \PHPBenchmark\testing\FunctionComparison;
 
+function xrange($start, $limit, $step = 1) {
+    if ($start < $limit) {
+        if ($step <= 0) {
+            throw new LogicException('Step must be +ve');
+        }
+
+        for ($i = $start; $i <= $limit; $i += $step) {
+            yield $i;
+        }
+    } else {
+        if ($step >= 0) {
+            throw new LogicException('Step must be -ve');
+        }
+
+        for ($i = $start; $i >= $limit; $i += $step) {
+            yield $i;
+        }
+    }
+}
+
 FunctionComparison::load()
-    ->addFunction('stream_resolve_include_path', function() {
-        $bool = stream_resolve_include_path(__FILE__) !== false;
+    ->addFunction('using array', function () {
+        foreach (range(1, 9, 2) as $number) {}
     })
-    ->addFunction('file_exists', function() {
-        $bool = file_exists(__FILE__);
+    ->addFunction('using generator', function () {
+        foreach (xrange(1, 9, 2) as $number) {}
     })
     ->exec();
-
 ```
 
 Load a file having this code in the browser, or call it via command line, and you will
-find out which function that wins the game.
+find out that yielding consumes less memory but is at the same time considerbly slower.
 
 You can also call `->run()` to get hold of an object representing the results of the comparison test.
 Read more in the [docs](https://github.com/victorjonsson/PHP-Benchmark/blob/master/DOCS.md#class-phpbenchmarktestingfunctioncomparison).
