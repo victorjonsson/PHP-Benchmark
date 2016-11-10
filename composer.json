@@ -20,7 +20,6 @@
     "require-dev" : {
         "phpunit/phpunit": "3.7.23"
     },
-    "bin": ["./php-benchmark"],
     "autoload": {
         "psr-0": {"PHPBenchmark": "lib/"}
     }
