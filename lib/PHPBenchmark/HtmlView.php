@@ -32,13 +32,13 @@ class HtmlView implements PerformanceResultViewInterface
         $tableRowMarkup = $this->getTableRowMarkup();
         $performanceInfo = $monitor->getPerformanceInfo();
 
-        $lastPercent = 0;
+        $percentTotal = 0;
         foreach ($monitor->getSnapShots() as $name => $snapshot) {
 
             list($label, $percent) = $this->getPercentageDisplay(
                 $snapshot,
                 $performanceInfo,
-                $lastPercent
+                $percentTotal
             );
 
             $table .= sprintf(
@@ -51,7 +51,7 @@ class HtmlView implements PerformanceResultViewInterface
                 $label
             );
 
-            $lastPercent = $percent;
+            $percentTotal += $percent;
             $this->keepTrackOfPeakingMemoryAllocation($snapshot, $name);
         }
 
@@ -62,7 +62,7 @@ class HtmlView implements PerformanceResultViewInterface
             $performanceInfo->memoryAllocated(),
             $performanceInfo->numFilesIncluded(),
             $performanceInfo->numClassesDeclared(),
-            '100%' . (isset($lastPercent) ? (' <em>(' . (100 - $lastPercent) . '%)</em>') : '')
+            '100%' . (isset($percentTotal) ? (' <em>(' . (100 - $percentTotal) . '%)</em>') : '')
         );
 
         $table .= '</tbody></table>';
@@ -181,25 +181,28 @@ class HtmlView implements PerformanceResultViewInterface
         PerformanceInfoInterface $snapshot,
         PerformanceInfoInterface $performanceInfo
     ) {
+        error_log($snapshot->timePassed() .' / '. $performanceInfo->timePassed());
         return (100 * bcdiv($snapshot->timePassed(), $performanceInfo->timePassed(), 2));
     }
 
     /**
      * @param PerformanceInfoInterface $snapshot
      * @param PerformanceInfoInterface $performanceInfo
-     * @param int $lastPercent
+     * @param int $percentTotal
      * @return array
      */
     private function getPercentageDisplay(
         PerformanceInfoInterface $snapshot,
         PerformanceInfoInterface $performanceInfo,
-        $lastPercent
+        $percentTotal
     ) {
         $percent = $this->calculatePercentageOf($snapshot, $performanceInfo);
         if (0 != $percent) {
-            $label =  $percent.'% <em>(' . ($percent - $lastPercent) . '%)</em>';
+            $label =  ($percent + $percentTotal).'% <em>(' .$percent. '%)</em>';
+        } elseif ($percentTotal != 0) {
+            $label = $percentTotal.'% <em>(<1%)</em>';
         } else {
-            $label = $percent.'%';
+            $label = $percentTotal.'%';
         }
         return array($label, $percent);
     }
