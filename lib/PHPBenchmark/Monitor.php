@@ -111,7 +111,7 @@ class Monitor extends Emitter implements MonitorInterface
 
     /**
      * Singleton instance of this class
-     * @return \PHPBenchmark\MonitorInterface
+     * @return Monitor
      */
     public static function instance()
     {
