@@ -181,7 +181,6 @@ class HtmlView implements PerformanceResultViewInterface
         PerformanceInfoInterface $snapshot,
         PerformanceInfoInterface $performanceInfo
     ) {
-        error_log($snapshot->timePassed() .' / '. $performanceInfo->timePassed());
         return (100 * bcdiv($snapshot->timePassed(), $performanceInfo->timePassed(), 2));
     }
 
