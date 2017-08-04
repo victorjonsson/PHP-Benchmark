@@ -19,6 +19,7 @@
 - [\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface (interface)](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)
 
 <hr /> 
+
 ### Class: \PHPBenchmark\HtmlView
 
 > Class that can display the result of an performance monitoring as HTML
@@ -33,6 +34,7 @@
 *This class implements [\PHPBenchmark\PerformanceResultViewInterface](#interface-phpbenchmarkperformanceresultviewinterface)*
 
 <hr /> 
+
 ### Class: \PHPBenchmark\Monitor
 
 > Class used to collect benchmark data over a given time
@@ -53,6 +55,7 @@
 *This class implements \League\Event\ListenerAcceptorInterface, \League\Event\EmitterInterface, [\PHPBenchmark\MonitorInterface](#interface-phpbenchmarkmonitorinterface)*
 
 <hr /> 
+
 ### Interface: \PHPBenchmark\MonitorInterface
 
 | Visibility | Function |
@@ -65,6 +68,7 @@
 *This class implements \League\Event\ListenerAcceptorInterface*
 
 <hr /> 
+
 ### Interface: \PHPBenchmark\PerformanceResultViewInterface
 
 > Interface for classes that can generate a view displaying the result from a performance monitoring test
@@ -74,6 +78,7 @@
 | public | <strong>getView(</strong><em>[\PHPBenchmark\MonitorInterface](#interface-phpbenchmarkmonitorinterface)</em> <strong>$monitor</strong>)</strong> : <em>string</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\Utils
 
 | Visibility | Function |
@@ -82,6 +87,7 @@
 | public static | <strong>toMegaBytes(</strong><em>mixed</em> <strong>$bytes</strong>)</strong> : <em>float</em> |
 
 <hr /> 
+
 ### <strike>Class: \PHPBenchmark\testing\AbstractFunctionComparison (abstract)</strike>
 
 > **DEPRECATED** No longer used....
@@ -92,6 +98,7 @@
 *This class extends [\PHPBenchmark\testing\FunctionComparison](#class-phpbenchmarktestingfunctioncomparison)*
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\FunctionComparison
 
 > Class that can be used to compare the performance between different algorithms.
@@ -109,6 +116,7 @@
 | public | <strong>setNumRuns(</strong><em>int</em> <strong>$numRuns</strong>)</strong> : <em>void</em><br /><em>The number of times each function will be called</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\TestResult
 
 > Object representing a test result
@@ -122,6 +130,7 @@
 | public | <strong>getWinner()</strong> : <em>[\PHPBenchmark\testing\TestRunResult](#class-phpbenchmarktestingtestrunresult)</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\TestRunResult
 
 > Object containing information about a function test
@@ -138,6 +147,7 @@
 | public | <strong>toggleIsWinner(</strong><em>bool</em> <strong>$toggle</strong>)</strong> : <em>void</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\formatting\CLITableFormatter
 
 > Class that can interpret \PHPBenchmark\testing\TestResult and output a table that can be used in a console program
@@ -149,6 +159,7 @@
 *This class implements [\PHPBenchmark\testing\formatting\FormatterInterface](#interface-phpbenchmarktestingformattingformatterinterface)*
 
 <hr /> 
+
 ### Interface: \PHPBenchmark\testing\formatting\FormatterInterface
 
 > Interface implemented by classes that can interpret \PHPBenchmark\testing\TestResult into something that is human-readable
@@ -158,6 +169,7 @@
 | public | <strong>format(</strong><em>[\PHPBenchmark\testing\TestResult](#class-phpbenchmarktestingtestresult)</em> <strong>$result</strong>)</strong> : <em>string</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\formatting\HTMLFormatter
 
 > Class that can interpret \PHPBenchmark\testing\TestResult and output an HTML formatted representation of the result
@@ -169,6 +181,7 @@
 *This class implements [\PHPBenchmark\testing\formatting\FormatterInterface](#interface-phpbenchmarktestingformattingformatterinterface)*
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\metrics\NullPerformanceInfoObject
 
 | Visibility | Function |
@@ -183,6 +196,7 @@
 *This class implements [\PHPBenchmark\testing\metrics\PerformanceInfoInterface](#interface-phpbenchmarktestingmetricsperformanceinfointerface)*
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\metrics\PerformanceInfo
 
 > Object presenting performance related information
@@ -204,6 +218,7 @@
 *This class implements [\PHPBenchmark\testing\metrics\PerformanceInfoInterface](#interface-phpbenchmarktestingmetricsperformanceinfointerface), \ArrayAccess*
 
 <hr /> 
+
 ### Interface: \PHPBenchmark\testing\metrics\PerformanceInfoInterface
 
 > Interface for objects representing performance related information
@@ -218,6 +233,7 @@
 | public | <strong>timePassed()</strong> : <em>float</em> |
 
 <hr /> 
+
 ### Class: \PHPBenchmark\testing\metrics\PerformanceSnapshot
 
 > Object containing data that describes performance relative to a previously recorded state.
@@ -256,6 +272,7 @@
 *This class implements \ArrayAccess, [\PHPBenchmark\testing\metrics\PerformanceInfoInterface](#interface-phpbenchmarktestingmetricsperformanceinfointerface), [\PHPBenchmark\testing\metrics\PerformanceSnapshotInterface](#interface-phpbenchmarktestingmetricsperformancesnapshotinterface)*
 
 <hr /> 
+
 ### Interface: \PHPBenchmark\testing\metrics\PerformanceSnapshotInterface
 
 > Object containing data that might describe the performance
